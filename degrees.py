@@ -88,7 +88,7 @@ def shortest_path(source, target):
     if source == target:  # checks if the source and target are the same people then return none
         return
 
-    visited = StackFrontier()  # set used to find the nodes that have been visited, so they are not repeated in the BFS
+    visited = set()  # set used to find the nodes that have been visited, so they are not repeated in the BFS
     queue = QueueFrontier()  # set used to check whom to use as the next source
 
     """
@@ -100,12 +100,15 @@ def shortest_path(source, target):
     sourceNode = Node(source, None, None)
     queue.add(sourceNode)
 
+    count = 0
+
     # Normal Breath First Search
     while not queue.empty():
         # takes the top node from the queue to look through its  neighbours for the target
         currentNode = queue.remove()
-        if visited.contains_state(currentNode) != currentNode:
-            visited.add(currentNode)
+        print(count)
+        if currentNode.state not in visited:
+            visited.add(currentNode.state)
             neighbors = neighbors_for_person(currentNode.state)
             # creates a node for every new person found who are connected to the source actor
             for person in neighbors:
@@ -114,14 +117,14 @@ def shortest_path(source, target):
                 # if the target is found it formats the node into a new array and outputs the array as a result
                 if newNode.state == target:
                     connectionsList = []
-                    while not newNode.parent is None:
+                    while newNode.parent is not None:
                         connectionsList.insert(0, [newNode.action, newNode.state])
                         newNode = newNode.parent
                     return connectionsList
                 # if the target is not found it adds the new neighbour to the queue
-                else:
-                    if not visited.contains_state(newNode):
-                        queue.add(newNode)
+                elif newNode.state not in visited:
+                    count= count + 1
+                    queue.add(newNode)
 
     return None
 
